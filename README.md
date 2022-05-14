@@ -3,31 +3,7 @@ Bean Machine Job
 
 Thank you for downloading the script please follow this steps before running the script:
 
-1 - Add export if using the clothing with the script:
-go to the "qb-clothing" script then "main.lua" and add this : 
-
-```
-function ExportBeanMachine()
-    openMenu({
-		{menu = "character", label = "Clothing", selected = true},
-		{menu = "accessoires", label = "Accessories", selected = false}
-	})
-end
-```
-
-and add this to the fxmanifest of the "qb-clothing"
-
-```
-exports {
-	'ExportBeanMachine',
-}
-```
-
-line doesnt matter
-
-Video: https://streamable.com/2nurvq
-
-2 - Add items:
+1 - Add items:
 go to "qb-core" then shared folder > items.lua and add this : 
 
 	--Bean Machine
@@ -71,7 +47,7 @@ go to "qb-core" then shared folder > items.lua and add this :
 
 Video: https://streamable.com/sspxn5
 
-3 - Add the job:
+2 - Add the job:
 go to "qb-core" then shared folder > jobs.lua and at least under line 4 :
 
     ["beanmachine"] = {
@@ -97,7 +73,7 @@ go to "qb-core" then shared folder > jobs.lua and at least under line 4 :
 
 Video: https://streamable.com/os10ii
 
-4 - Add images to inventory
+3 - Add images to inventory
 here you have images folder copy the images inside that folder and put it inside "qb-inventory"
 
 Video: https://streamable.com/0bb51c
