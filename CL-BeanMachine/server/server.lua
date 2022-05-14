@@ -162,6 +162,20 @@ RegisterServerEvent('CL-BeanMachine:BuyGlass', function(data)
     end  
 end)
 
+QBCore.Functions.CreateCallback('CL-BeanMachine:ItemCheck', function(source, cb)
+    local src = source
+    local Player = QBCore.Functions.GetPlayer(src)
+    local count = Config.Recipes[item].amount
+
+    for k, v in pairs(Config.Recipes[item].Ingredients) do
+        if Player.Functions.GetItemByName(k) == nil or Player.Functions.GetItemByName(k).amount < v then
+            cb(true)
+        else
+            cb(false)
+        end
+    end
+end)
+
 QBCore.Functions.CreateCallback('CL-BeanMachine:CheckForCloudCafeItems', function(source, cb)
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
@@ -315,4 +329,21 @@ QBCore.Functions.CreateCallback('CL-BeanMachine:CheckForStrawberryVanillaOatLatt
     else
         cb(false)
 	end
+end)
+
+QBCore.Functions.CreateCallback('CL-BeanMachine:CheckDuty', function(source, cb)
+    local src = source
+    local Player = QBCore.Functions.GetPlayer(src)
+    if Player.PlayerData.job.onduty then
+        cb(true)
+    else
+        cb(false)
+	end
+end)
+
+RegisterServerEvent('CL-BeanMachine:ResetDuty', function()
+	local src = source
+	local Player = QBCore.Functions.GetPlayer(src)
+
+    Player.Functions.SetJobDuty(false)  
 end)

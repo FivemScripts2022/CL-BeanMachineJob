@@ -1,7 +1,5 @@
 local QBCore = exports['qb-core']:GetCoreObject()
 
-local onDuty = false
-
 local occupied = {}
 
 local CanSit = false
@@ -21,7 +19,6 @@ end)
 RegisterNetEvent('QBCore:Client:OnJobUpdate')
 AddEventHandler('QBCore:Client:OnJobUpdate', function(JobInfo)
     PlayerJob = JobInfo
-	onDuty = PlayerJob.onduty
 end)
 
 AddEventHandler('onClientResourceStart',function()
@@ -31,8 +28,12 @@ AddEventHandler('onClientResourceStart',function()
                 QBCore.Functions.GetPlayerData(function(PlayerData)
                     if PlayerData.job then
                         PlayerJob = PlayerData.job
-						onDuty = PlayerJob.onduty
-                    end
+						QBCore.Functions.TriggerCallback('CL-BeanMachine:CheckDuty', function(result)
+							if result then
+								TriggerServerEvent("CL-BeanMachine:ResetDuty")
+							end
+						end)
+					end
                 end)
                 break
             end
@@ -94,7 +95,7 @@ end)
 ----Target
 ----------------
 Citizen.CreateThread(function()
-	exports[Config.Target]:AddBoxZone("Duty", vector3(126.99156, -1035.663, 29.569875), 0.3, 1.2, {
+	exports[Config.Target]:AddBoxZone("Duty", vector3(-85.76502, -1247.697, 29.180395), 0.3, 1.2, {
 		name = "Duty",
 		heading = 248.91331,
 		debugPoly = Config.PolyZone,
@@ -117,11 +118,11 @@ Citizen.CreateThread(function()
 			},
 			{
 				type = "client",
-				event = "CL-BeanMachine:Clothing",
+				event = "qb-clothing:client:openMenu",
 				icon = Config.Locals["ClothingTarget"]["Icon"],
 				label = Config.Locals["ClothingTarget"]["Label"],
 				canInteract = function()
-					if Config.UseClothing == true and onDuty and PlayerJob.name == Config.Job then
+					if Config.UseClothing == true and PlayerJob.name == Config.Job then
 						return true
 					else
 						return false
@@ -168,7 +169,7 @@ Citizen.CreateThread(function()
 				icon = Config.Locals['ToastsTarget']['Icon'],
 				label = Config.Locals['ToastsTarget']['Label'],
 				canInteract = function()
-					if onDuty and PlayerJob.name == Config.Job then
+					if PlayerJob.name == Config.Job then
 						return true
 					else
 						return false
@@ -265,7 +266,7 @@ Citizen.CreateThread(function()
 				icon = Config.Locals['MuffinsTarget']['Icon'],
 				label = Config.Locals['MuffinsTarget']['Label'],
 				canInteract = function()
-					if onDuty and PlayerJob.name == Config.Job then
+					if PlayerJob.name == Config.Job then
 						return true
 					else
 						return false
@@ -290,7 +291,7 @@ Citizen.CreateThread(function()
 				icon = Config.Locals['StashTarget']['Icon'],
 				label = Config.Locals['StashTarget']['Label'],
 				canInteract = function()
-					if onDuty and PlayerJob.name == Config.Job then
+					if PlayerJob.name == Config.Job then
 						return true
 					else
 						return false
@@ -315,7 +316,7 @@ Citizen.CreateThread(function()
 				icon = Config.Locals['ShopTarget']['Icon'],
 				label = Config.Locals['ShopTarget']['Label'],
 				canInteract = function()
-					if onDuty and PlayerJob.name == Config.Job then
+					if PlayerJob.name == Config.Job then
 						return true
 					else
 						return false
@@ -340,7 +341,7 @@ Citizen.CreateThread(function()
 				icon = Config.Locals['WashHandsTarget']['Icon'],
 				label = Config.Locals['WashHandsTarget']['Label'],
 				canInteract = function()
-					if onDuty and PlayerJob.name == Config.Job then
+					if PlayerJob.name == Config.Job then
 						return true
 					else
 						return false
@@ -366,7 +367,7 @@ Citizen.CreateThread(function()
 					icon = Config.Locals['CupTarget']['Icon'],
 					label = Config.Locals['CupTarget']['Label'],
 					canInteract = function()
-						if onDuty and PlayerJob.name == Config.Job then
+						if PlayerJob.name == Config.Job then
 							return true
 						else
 							return false
@@ -392,7 +393,7 @@ Citizen.CreateThread(function()
 				icon = Config.Locals['DrinksTarget']['Icon'],
 				label = Config.Locals['DrinksTarget']['Label'],
 				canInteract = function()
-					if onDuty and PlayerJob.name == Config.Job then
+					if PlayerJob.name == Config.Job then
 						return true
 					else
 						return false
@@ -417,7 +418,7 @@ Citizen.CreateThread(function()
 				icon = Config.Locals['SlushsTarget']['Icon'],
 				label = Config.Locals['SlushsTarget']['Label'],
 				canInteract = function()
-					if onDuty and PlayerJob.name == Config.Job then
+					if PlayerJob.name == Config.Job then
 						return true
 					else
 						return false
@@ -445,7 +446,7 @@ Citizen.CreateThread(function()
 					firstmenu = v.firstmenu,
 					secondmenu = v.secondmenu,
 					canInteract = function()
-						if onDuty and PlayerJob.name == Config.Job then
+						if PlayerJob.name == Config.Job then
 							return true
 						else
 							return false
@@ -471,7 +472,7 @@ Citizen.CreateThread(function()
 				icon = Config.Locals['BeansTarget']['Icon'],
 				label = Config.Locals['BeansTarget']['Label'],
 				canInteract = function()
-					if onDuty and PlayerJob.name == Config.Job then
+					if PlayerJob.name == Config.Job then
 						return true
 					else
 						return false
@@ -496,7 +497,7 @@ Citizen.CreateThread(function()
 				icon = Config.Locals['BeansTarget']['Icon'],
 				label = Config.Locals['BeansTarget']['Label'],
 				canInteract = function()
-					if onDuty and PlayerJob.name == Config.Job then
+					if PlayerJob.name == Config.Job then
 						return true
 					else
 						return false
@@ -521,7 +522,7 @@ Citizen.CreateThread(function()
 				icon = Config.Locals['GlassesTarget']['Icon'],
 				label = Config.Locals['GlassesTarget']['Label'],
 				canInteract = function()
-					if onDuty and PlayerJob.name == Config.Job then
+					if PlayerJob.name == Config.Job then
 						return true
 					else
 						return false
@@ -536,16 +537,6 @@ end)
 ----------------
 ----Events
 ----------------
-RegisterNetEvent("CL-BeanMachine:SetDuty")
-AddEventHandler("CL-BeanMachine:SetDuty", function()
-    TriggerServerEvent("QBCore:ToggleDuty")
-end)
-
-RegisterNetEvent('CL-BeanMachine:Clothing')
-AddEventHandler('CL-BeanMachine:Clothing', function()
-	exports['qb-clothing']:ExportBeanMachine()
-end)
-
 RegisterNetEvent("CL-BeanMachine:OpenTray1", function()
 	TriggerServerEvent("inventory:server:OpenInventory", "stash", "Bean Machine Tray", {maxweight = 30000, slots = 10})
 	TriggerEvent("inventory:client:SetCurrentStash", "Bean Machine Tray") 
@@ -557,28 +548,46 @@ RegisterNetEvent("CL-BeanMachine:OpenTray2", function()
 end)
 
 RegisterNetEvent("CL-BeanMachine:OpenWorkersStash", function()
-	TriggerServerEvent("inventory:server:OpenInventory", "stash", "Bean Machine Stash", {maxweight = 100000, slots = 100})
-	TriggerEvent("inventory:client:SetCurrentStash", "Bean Machine Stash") 
+	QBCore.Functions.TriggerCallback('CL-BeanMachine:CheckDuty', function(result)
+		if result then
+			TriggerServerEvent("inventory:server:OpenInventory", "stash", "Bean Machine Stash", {maxweight = 100000, slots = 100})
+			TriggerEvent("inventory:client:SetCurrentStash", "Bean Machine Stash") 
+		else
+			QBCore.Functions.Notify("You must be on duty.", "error")
+		end
+	end)
 end)
 
 RegisterNetEvent('CL-BeanMachine:OpenShop', function()
-    TriggerServerEvent("inventory:server:OpenInventory", "shop", "Main Shop", Config.ShopItems)
+	QBCore.Functions.TriggerCallback('CL-BeanMachine:CheckDuty', function(result)
+		if result then
+			TriggerServerEvent("inventory:server:OpenInventory", "shop", "Main Shop", Config.ShopItems)
+		else
+			QBCore.Functions.Notify("You must be on duty.", "error")
+		end
+	end)
 end)
 
 RegisterNetEvent('CL-BeanMachine:WashHands', function()
-	QBCore.Functions.Progressbar("wash_hands", Config.Locals["WashingHandsProgressBar"]["Txt"], Config.Locals["WashingHandsProgressBar"]["Time"], false, true, {
-		disableMovement = true,
-		disableCarMovement = false,
-		disableMouse = false,
-		disableCombat = true,
-	}, {
-		animDict = "amb@world_human_bum_wash@male@low@base",
-		anim = "base",
-		flags = 49,
-	}, {}, {}, function()
-		TriggerServerEvent('hud:server:RelieveStress', Config.WashingHandsStress)
-	end, function()
-		QBCore.Functions.Notify("Canceled...", "error")
+	QBCore.Functions.TriggerCallback('CL-BeanMachine:CheckDuty', function(result)
+		if result then
+			QBCore.Functions.Progressbar("wash_hands", Config.Locals["WashingHandsProgressBar"]["Txt"], Config.Locals["WashingHandsProgressBar"]["Time"], false, true, {
+				disableMovement = true,
+				disableCarMovement = false,
+				disableMouse = false,
+				disableCombat = true,
+			}, {
+				animDict = "amb@world_human_bum_wash@male@low@base",
+				anim = "base",
+				flags = 49,
+			}, {}, {}, function()
+				TriggerServerEvent('hud:server:RelieveStress', Config.WashingHandsStress)
+			end, function()
+				QBCore.Functions.Notify("Canceled...", "error")
+			end)
+		else
+			QBCore.Functions.Notify("You must be on duty.", "error")
+		end
 	end)
 end)
 
@@ -863,11 +872,17 @@ end)
 
 RegisterNetEvent('CL-BeanMachine:SeperatingEvent')
 AddEventHandler('CL-BeanMachine:SeperatingEvent', function(data)
-	if data.firstmenu then
-		TriggerEvent("CL-BeanMachine:FirstCoffeeMenu")
-	elseif data.secondmenu then
-		TriggerEvent("CL-BeanMachine:SecondCoffeeMenu")
-	end
+	QBCore.Functions.TriggerCallback('CL-BeanMachine:CheckDuty', function(result)
+        if result then
+			if data.firstmenu then
+				TriggerEvent("CL-BeanMachine:FirstCoffeeMenu")
+			elseif data.secondmenu then
+				TriggerEvent("CL-BeanMachine:SecondCoffeeMenu")
+			end
+        else
+            QBCore.Functions.Notify("You must be on duty.", "error")
+        end
+    end)
 end)
 
 RegisterNetEvent('CL-BeanMachine:OpenMenu')
@@ -907,7 +922,8 @@ RegisterNetEvent("CL-BeanMachine:DutyMenu", function()
         header = Config.Locals["DutyMenu"]["Header"],
 		txt = Config.Locals["DutyMenu"]["Txt"],
         params = {
-            event = "CL-BeanMachine:SetDuty"
+			isServer = true,
+            event = "QBCore:ToggleDuty"
         }
     }
     DutyMenu[#DutyMenu+1] = {
@@ -920,47 +936,53 @@ RegisterNetEvent("CL-BeanMachine:DutyMenu", function()
 end)
 
 RegisterNetEvent("CL-BeanMachine:ToastsMenu", function()
-    local ToastsMenu = {
-        {
-            header = "Toasts / Donuts",
-            isMenuHeader = true,
-        }
-    }
-	ToastsMenu[#ToastsMenu+1] = {
-        header = Config.Locals["ToastsMenu"]["Header"],
-		txt = Config.Locals["ToastsMenu"]["Txt"],
-        params = {
-            event = "CL-BeanMachine:Grab",
-			args = {
-				item = Config.Items['ToastItem'],
-				progressbartext = Config.Locals["GrabToastProgressBar"]["Txt"],
-				progressbartime = Config.Locals["GrabToastProgressBar"]["Time"],
-				animationdict = "anim@amb@clubhouse@boardroom@crew@male@var_a@base@",
-				animation = "idle_c"
+	QBCore.Functions.TriggerCallback('CL-BeanMachine:CheckDuty', function(result)
+        if result then
+			local ToastsMenu = {
+				{
+					header = "Toasts / Donuts",
+					isMenuHeader = true,
+				}
 			}
-        }
-    }
-	ToastsMenu[#ToastsMenu+1] = {
-        header = Config.Locals["DonutsMenu"]["Header"],
-		txt = Config.Locals["DonutsMenu"]["Txt"],
-        params = {
-            event = "CL-BeanMachine:Grab",
-			args = {
-				item = Config.Items['DonutItem'],
-				progressbartext = Config.Locals["GrabDonutProgressBar"]["Txt"],
-				progressbartime = Config.Locals["GrabDonutProgressBar"]["Time"],
-				animationdict = "anim@amb@clubhouse@boardroom@crew@male@var_a@base@",
-				animation = "idle_c"
+			ToastsMenu[#ToastsMenu+1] = {
+				header = Config.Locals["ToastsMenu"]["Header"],
+				txt = Config.Locals["ToastsMenu"]["Txt"],
+				params = {
+					event = "CL-BeanMachine:Grab",
+					args = {
+						item = Config.Items['ToastItem'],
+						progressbartext = Config.Locals["GrabToastProgressBar"]["Txt"],
+						progressbartime = Config.Locals["GrabToastProgressBar"]["Time"],
+						animationdict = "anim@amb@clubhouse@boardroom@crew@male@var_a@base@",
+						animation = "idle_c"
+					}
+				}
 			}
-        }
-    }
-    ToastsMenu[#ToastsMenu+1] = {
-        header = "⬅ Close",
-        params = {
-            event = "qb-menu:client:closemenu"
-        }
-    }
-    exports['qb-menu']:openMenu(ToastsMenu)
+			ToastsMenu[#ToastsMenu+1] = {
+				header = Config.Locals["DonutsMenu"]["Header"],
+				txt = Config.Locals["DonutsMenu"]["Txt"],
+				params = {
+					event = "CL-BeanMachine:Grab",
+					args = {
+						item = Config.Items['DonutItem'],
+						progressbartext = Config.Locals["GrabDonutProgressBar"]["Txt"],
+						progressbartime = Config.Locals["GrabDonutProgressBar"]["Time"],
+						animationdict = "anim@amb@clubhouse@boardroom@crew@male@var_a@base@",
+						animation = "idle_c"
+					}
+				}
+			}
+			ToastsMenu[#ToastsMenu+1] = {
+				header = "⬅ Close",
+				params = {
+					event = "qb-menu:client:closemenu"
+				}
+			}
+			exports['qb-menu']:openMenu(ToastsMenu)
+        else
+            QBCore.Functions.Notify("You must be on duty.", "error")
+        end
+    end)
 end)
 
 RegisterNetEvent("CL-BeanMachine:FruitsMenu", function()
@@ -1022,61 +1044,67 @@ RegisterNetEvent("CL-BeanMachine:FruitsMenu", function()
 end)
 
 RegisterNetEvent("CL-BeanMachine:MuffinsMenu", function()
-    local MuffinsMenu = {
-        {
-            header = "Muffins",
-            isMenuHeader = true,
-        }
-    }
-	MuffinsMenu[#MuffinsMenu+1] = {
-        header = Config.Locals["RegularMuffinMenu"]["Header"],
-		txt = Config.Locals["RegularMuffinMenu"]["Txt"],
-        params = {
-			event = "CL-BeanMachine:Grab",
-			args = {
-				item = Config.Items['RegularMuffinItem'],
-				progressbartext = Config.Locals["GrabRegularMuffinProgressBar"]["Txt"],
-				progressbartime = Config.Locals["GrabRegularMuffinProgressBar"]["Time"],
-				animationdict = "anim@amb@clubhouse@bar@drink@one",
-				animation = "one_player"
+	QBCore.Functions.TriggerCallback('CL-BeanMachine:CheckDuty', function(result)
+        if result then
+			local MuffinsMenu = {
+				{
+					header = "Muffins",
+					isMenuHeader = true,
+				}
 			}
-        }
-    }
-	MuffinsMenu[#MuffinsMenu+1] = {
-        header = Config.Locals["ChocolateMuffinMenu"]["Header"],
-		txt = Config.Locals["ChocolateMuffinMenu"]["Txt"],
-        params = {
-			event = "CL-BeanMachine:Grab",
-			args = {
-				item = Config.Items['ChocolateMuffinItem'],
-				progressbartext = Config.Locals["GrabChocolateMuffinProgressBar"]["Txt"],
-				progressbartime = Config.Locals["GrabChocolateMuffinProgressBar"]["Time"],
-				animationdict = "anim@amb@clubhouse@bar@drink@one",
-				animation = "one_player"
+			MuffinsMenu[#MuffinsMenu+1] = {
+				header = Config.Locals["RegularMuffinMenu"]["Header"],
+				txt = Config.Locals["RegularMuffinMenu"]["Txt"],
+				params = {
+					event = "CL-BeanMachine:Grab",
+					args = {
+						item = Config.Items['RegularMuffinItem'],
+						progressbartext = Config.Locals["GrabRegularMuffinProgressBar"]["Txt"],
+						progressbartime = Config.Locals["GrabRegularMuffinProgressBar"]["Time"],
+						animationdict = "anim@amb@clubhouse@bar@drink@one",
+						animation = "one_player"
+					}
+				}
 			}
-        }
-    }
-	MuffinsMenu[#MuffinsMenu+1] = {
-        header = Config.Locals["BerryMuffinMenu"]["Header"],
-		txt = Config.Locals["BerryMuffinMenu"]["Txt"],
-        params = {
-			event = "CL-BeanMachine:Grab",
-			args = {
-				item = Config.Items['BerryMuffinItem'],
-				progressbartext = Config.Locals["GrabBerryMuffinProgressBar"]["Txt"],
-				progressbartime = Config.Locals["GrabBerryMuffinProgressBar"]["Time"],
-				animationdict = "anim@amb@clubhouse@bar@drink@one",
-				animation = "one_player"
+			MuffinsMenu[#MuffinsMenu+1] = {
+				header = Config.Locals["ChocolateMuffinMenu"]["Header"],
+				txt = Config.Locals["ChocolateMuffinMenu"]["Txt"],
+				params = {
+					event = "CL-BeanMachine:Grab",
+					args = {
+						item = Config.Items['ChocolateMuffinItem'],
+						progressbartext = Config.Locals["GrabChocolateMuffinProgressBar"]["Txt"],
+						progressbartime = Config.Locals["GrabChocolateMuffinProgressBar"]["Time"],
+						animationdict = "anim@amb@clubhouse@bar@drink@one",
+						animation = "one_player"
+					}
+				}
 			}
-        }
-    }
-    MuffinsMenu[#MuffinsMenu+1] = {
-        header = "⬅ Close",
-        params = {
-            event = "qb-menu:client:closemenu"
-        }
-    }
-    exports['qb-menu']:openMenu(MuffinsMenu)
+			MuffinsMenu[#MuffinsMenu+1] = {
+				header = Config.Locals["BerryMuffinMenu"]["Header"],
+				txt = Config.Locals["BerryMuffinMenu"]["Txt"],
+				params = {
+					event = "CL-BeanMachine:Grab",
+					args = {
+						item = Config.Items['BerryMuffinItem'],
+						progressbartext = Config.Locals["GrabBerryMuffinProgressBar"]["Txt"],
+						progressbartime = Config.Locals["GrabBerryMuffinProgressBar"]["Time"],
+						animationdict = "anim@amb@clubhouse@bar@drink@one",
+						animation = "one_player"
+					}
+				}
+			}
+			MuffinsMenu[#MuffinsMenu+1] = {
+				header = "⬅ Close",
+				params = {
+					event = "qb-menu:client:closemenu"
+				}
+			}
+			exports['qb-menu']:openMenu(MuffinsMenu)
+        else
+            QBCore.Functions.Notify("You must be on duty.", "error")
+        end
+    end)
 end)
 
 RegisterNetEvent("CL-BeanMachine:FruitsMenu2", function()
@@ -1180,51 +1208,63 @@ RegisterNetEvent("CL-BeanMachine:Catalog", function()
 end)
 
 RegisterNetEvent("CL-BeanMachine:CupsMenu", function()
-    local CupMenu = {
-        {
-            header = "Cups",
-            isMenuHeader = true,
-        }
-    }
-    for k, v in pairs(Config.Cups) do
-        CupMenu[#CupMenu+1] = {
-            header = v.cupname,
-            txt = "Take: " .. v.cupname,
-            params = {
-                event = "CL-BeanMachine:TakeCup",
-                args = {
-                    cup = v.cup,
-					cupname = v.cupname,
-                }
-            }
-        }
-    end
-    CupMenu[#CupMenu+1] = {
-        header = "⬅ Close",
-        params = {
-			event = "qb-menu:client:closeMenu"
-        }
-    }
-    exports['qb-menu']:openMenu(CupMenu)
+	QBCore.Functions.TriggerCallback('CL-BeanMachine:CheckDuty', function(result)
+        if result then
+			local CupMenu = {
+				{
+					header = "Cups",
+					isMenuHeader = true,
+				}
+			}
+			for k, v in pairs(Config.Cups) do
+				CupMenu[#CupMenu+1] = {
+					header = v.cupname,
+					txt = "Take: " .. v.cupname,
+					params = {
+						event = "CL-BeanMachine:TakeCup",
+						args = {
+							cup = v.cup,
+							cupname = v.cupname,
+						}
+					}
+				}
+			end
+			CupMenu[#CupMenu+1] = {
+				header = "⬅ Close",
+				params = {
+					event = "qb-menu:client:closeMenu"
+				}
+			}
+			exports['qb-menu']:openMenu(CupMenu)
+        else
+            QBCore.Functions.Notify("You must be on duty.", "error")
+        end
+    end)
 end)
 
 RegisterNetEvent("CL-BeanMachine:DrinksMenu", function()
-	local DrinksMenu = {
-		{
-			header = "Drinks Machine",
-			txt = "View Drinks",
-			params = {
-				event = "CL-BeanMachine:DrinksCatalog",
+	QBCore.Functions.TriggerCallback('CL-BeanMachine:CheckDuty', function(result)
+        if result then
+			local DrinksMenu = {
+				{
+					header = "Drinks Machine",
+					txt = "View Drinks",
+					params = {
+						event = "CL-BeanMachine:DrinksCatalog",
+					}
+				}
 			}
-		}
-	}
-    DrinksMenu[#DrinksMenu+1] = {
-        header = "⬅ Close",
-        params = {
-			event = "qb-menu:client:closeMenu"
-        }
-    }
-    exports['qb-menu']:openMenu(DrinksMenu)
+			DrinksMenu[#DrinksMenu+1] = {
+				header = "⬅ Close",
+				params = {
+					event = "qb-menu:client:closeMenu"
+				}
+			}
+			exports['qb-menu']:openMenu(DrinksMenu)
+        else
+            QBCore.Functions.Notify("You must be on duty.", "error")
+        end
+    end)
 end)
 
 RegisterNetEvent("CL-BeanMachine:DrinksCatalog", function()
@@ -1260,33 +1300,39 @@ RegisterNetEvent("CL-BeanMachine:DrinksCatalog", function()
 end)
 
 RegisterNetEvent("CL-BeanMachine:SlushsMenu", function()
-    local SlushsMenu = {
-        {
-            header = "Slushs",
-            isMenuHeader = true,
-        }
-    }
-	SlushsMenu[#SlushsMenu+1] = {
-        header = "Orange Slush",
-		txt = "Make Orange Slushs",
-        params = {
-			event = "CL-BeanMachine:SlushsOrangeMenu"
-        }
-    }
-	SlushsMenu[#SlushsMenu+1] = {
-        header = "Lemon Slush",
-		txt = "Make Lemon Slushs",
-        params = {
-			event = "CL-BeanMachine:SlushsLemonMenu"
-        }
-    }
-    SlushsMenu[#SlushsMenu+1] = {
-        header = "⬅ Close",
-        params = {
-			event = "qb-menu:client:closeMenu"
-        }
-    }
-    exports['qb-menu']:openMenu(SlushsMenu)
+	QBCore.Functions.TriggerCallback('CL-BeanMachine:CheckDuty', function(result)
+        if result then
+			local SlushsMenu = {
+				{
+					header = "Slushs",
+					isMenuHeader = true,
+				}
+			}
+			SlushsMenu[#SlushsMenu+1] = {
+				header = "Orange Slush",
+				txt = "Make Orange Slushs",
+				params = {
+					event = "CL-BeanMachine:SlushsOrangeMenu"
+				}
+			}
+			SlushsMenu[#SlushsMenu+1] = {
+				header = "Lemon Slush",
+				txt = "Make Lemon Slushs",
+				params = {
+					event = "CL-BeanMachine:SlushsLemonMenu"
+				}
+			}
+			SlushsMenu[#SlushsMenu+1] = {
+				header = "⬅ Close",
+				params = {
+					event = "qb-menu:client:closeMenu"
+				}
+			}
+			exports['qb-menu']:openMenu(SlushsMenu)
+        else
+            QBCore.Functions.Notify("You must be on duty.", "error")
+        end
+    end)
 end)
 
 RegisterNetEvent("CL-BeanMachine:SlushsLemonMenu", function()
@@ -1572,66 +1618,78 @@ RegisterNetEvent("CL-BeanMachine:SecondCoffeeMenu", function()
 end)
 
 RegisterNetEvent("CL-BeanMachine:BeansMenu", function()
-    local BeansMenu = {
-        {
-            header = "Coffee Beans",
-            isMenuHeader = true,
-        }
-    }
-	for k, v in pairs(Config.Beans) do
-		BeansMenu[#BeansMenu+1] = {
-			header = v.beanimage.. " ┇ " .. v.beanname,
-			txt = "Grab: " .. v.beanname,
-			params = {
-				event = "CL-BeanMachine:Grab",
-				args = {
-					item = v.bean,
-					progressbartext = Config.Locals["GrabBeansProgressBar"]["Txt"],
-					progressbartime = Config.Locals["GrabBeansProgressBar"]["Time"],
-					animationdict = "anim@amb@clubhouse@boardroom@crew@male@var_a@base@",
-					animation = "idle_c"
+	QBCore.Functions.TriggerCallback('CL-BeanMachine:CheckDuty', function(result)
+        if result then
+			local BeansMenu = {
+				{
+					header = "Coffee Beans",
+					isMenuHeader = true,
 				}
 			}
-		}
-	end
-	BeansMenu[#BeansMenu+1] = {
-        header = "⬅ Close",
-        params = {
-			event = "qb-menu:client:closemenu",
-        }
-    }
-    exports['qb-menu']:openMenu(BeansMenu)
+			for k, v in pairs(Config.Beans) do
+				BeansMenu[#BeansMenu+1] = {
+					header = v.beanimage.. " ┇ " .. v.beanname,
+					txt = "Grab: " .. v.beanname,
+					params = {
+						event = "CL-BeanMachine:Grab",
+						args = {
+							item = v.bean,
+							progressbartext = Config.Locals["GrabBeansProgressBar"]["Txt"],
+							progressbartime = Config.Locals["GrabBeansProgressBar"]["Time"],
+							animationdict = "anim@amb@clubhouse@boardroom@crew@male@var_a@base@",
+							animation = "idle_c"
+						}
+					}
+				}
+			end
+			BeansMenu[#BeansMenu+1] = {
+				header = "⬅ Close",
+				params = {
+					event = "qb-menu:client:closemenu",
+				}
+			}
+			exports['qb-menu']:openMenu(BeansMenu)
+		else
+            QBCore.Functions.Notify("You must be on duty.", "error")
+        end
+    end)
 end)
 
 RegisterNetEvent("CL-BeanMachine:GlassesMenu", function()
-    local GlassesMenu = {
-        {
-            header = "Glasses Menu",
-            isMenuHeader = true,
-        }
-    }
-	for k, v in pairs(Config.Glasses) do
-		GlassesMenu[#GlassesMenu+1] = {
-			header = v.image.." ┇ " ..v.glassname,
-			txt = "Buy " .. v.glassname .. " For: " .. v.price .. "$",
-			params = {
-				isServer = true,
-				event = "CL-BeanMachine:BuyGlass",
-				args = {
-					price = v.price,
-					glassname = v.glassname,
-					glass = v.glass
+	QBCore.Functions.TriggerCallback('CL-BeanMachine:CheckDuty', function(result)
+        if result then
+			local GlassesMenu = {
+				{
+					header = "Glasses Menu",
+					isMenuHeader = true,
 				}
 			}
-		}
-	end
-    GlassesMenu[#GlassesMenu+1] = {
-        header = "⬅ Close",
-        params = {
-            event = "qb-menu:client:closemenu"
-        }
-    }
-    exports['qb-menu']:openMenu(GlassesMenu)
+			for k, v in pairs(Config.Glasses) do
+				GlassesMenu[#GlassesMenu+1] = {
+					header = v.image.." ┇ " ..v.glassname,
+					txt = "Buy " .. v.glassname .. " For: " .. v.price .. "$",
+					params = {
+						isServer = true,
+						event = "CL-BeanMachine:BuyGlass",
+						args = {
+							price = v.price,
+							glassname = v.glassname,
+							glass = v.glass
+						}
+					}
+				}
+			end
+			GlassesMenu[#GlassesMenu+1] = {
+				header = "⬅ Close",
+				params = {
+					event = "qb-menu:client:closemenu"
+				}
+			}
+			exports['qb-menu']:openMenu(GlassesMenu)
+		else
+            QBCore.Functions.Notify("You must be on duty.", "error")
+        end
+    end)
 end)
 
 ----------------
