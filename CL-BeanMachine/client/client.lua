@@ -95,12 +95,12 @@ end)
 ----Target
 ----------------
 Citizen.CreateThread(function()
-	exports[Config.Target]:AddBoxZone("Duty",  vector3(126.63, -1035.86, 29.180395), 0.3, 1.2, {
+	exports[Config.Target]:AddBoxZone("Duty", vector3(126.99156, -1035.663, 29.569875), 0.3, 1.2, {
 		name = "Duty",
-		heading = 261.91331,
-		debugPoly = true,
-		minZ = 28.180395,
-		maxZ = 30.180395,
+		heading = 248.91331,
+		debugPoly = Config.PolyZone,
+		minZ = 28.569875,
+		maxZ = 30.569875,
 	}, {
 		options = { 
 			{
